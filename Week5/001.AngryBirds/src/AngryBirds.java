@@ -9,7 +9,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.dyn4j.dynamics.Body;
+import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.dynamics.World;
+import org.dyn4j.geometry.Geometry;
+import org.dyn4j.geometry.Mass;
+import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
 import org.jfree.fx.FXGraphics2D;
 import org.jfree.fx.ResizableCanvas;
@@ -27,6 +32,14 @@ public class AngryBirds extends Application {
     public void start(Stage stage) throws Exception {
 
         BorderPane mainPane = new BorderPane();
+
+        mainPane.setOnMousePressed(e -> {
+            System.out.println(String.format("entered\nx: %s, y: %s", e.getX(),e.getY()));
+        });
+
+        mainPane.setOnMouseReleased(e -> {
+            System.out.println(String.format("exited\nx: %s, y: %s", e.getX(),e.getY()));
+        });
 
         // Add debug button
         javafx.scene.control.CheckBox showDebug = new CheckBox("Show debug");
@@ -65,6 +78,21 @@ public class AngryBirds extends Application {
     public void init() {
         world = new World();
         world.setGravity(new Vector2(0, -9.8));
+
+        Body ball = new Body();
+        BodyFixture fixture = new BodyFixture(Geometry.createCircle(1));
+        fixture.setRestitution(.25);
+        ball.addFixture(fixture);
+        ball.getTransform().setTranslation(new Vector2(0,10));
+        ball.setMass(MassType.NORMAL);
+        world.addBody(ball);
+
+        Body rect = new Body();
+        BodyFixture rectFixture = new BodyFixture(Geometry.createRectangle(40,1));
+        rect.addFixture(rectFixture);
+        rect.getTransform().setTranslation(0,0);
+        rect.setMass(MassType.INFINITE);
+        world.addBody(rect);
     }
 
     public void draw(FXGraphics2D graphics) {
