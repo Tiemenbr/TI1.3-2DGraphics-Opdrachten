@@ -35,7 +35,7 @@ public class DisplayState implements ImageState {
     @Override
     public void update(double deltaTime) {
         this.timeSinceStateChange += deltaTime;
-        if (this.timeSinceStateChange > FadingImage.TIMEBETWEENIMAGECHANGE) {
+        if (this.timeSinceStateChange > FadingImage.TIME_BETWEEN_IMAGE_CHANGE) {
             this.currentImage++;
             if (this.currentImage > this.backgroundImages.length-1)
                 this.currentImage = 0;

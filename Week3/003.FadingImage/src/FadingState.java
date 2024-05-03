@@ -36,7 +36,7 @@ public class FadingState implements ImageState {
                 null);
 
         graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-                (float) (this.timeSinceStateChange == 0 ? 0 : this.timeSinceStateChange /FadingImage.TRANSITIONTIME)));
+                (float) (this.timeSinceStateChange == 0 ? 0 : this.timeSinceStateChange /FadingImage.TRANSITION_TIME)));
         graphics.drawImage(this.backgroundImages[this.currentImage],
                 AffineTransform.getScaleInstance(canvas.getWidth()/this.backgroundImages[this.currentImage].getWidth(),
                         canvas.getHeight()/this.backgroundImages[this.currentImage].getHeight()),
@@ -46,7 +46,7 @@ public class FadingState implements ImageState {
     @Override
     public void update(double deltaTime) {
         this.timeSinceStateChange += deltaTime;
-        if (this.timeSinceStateChange > FadingImage.TRANSITIONTIME)
+        if (this.timeSinceStateChange > FadingImage.TRANSITION_TIME)
             this.fadingImage.changeState(new DisplayState(this.fadingImage, this.canvas, this.backgroundImages, this.currentImage));
     }
 }

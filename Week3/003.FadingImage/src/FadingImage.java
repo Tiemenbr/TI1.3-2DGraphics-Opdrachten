@@ -7,19 +7,16 @@ import org.jfree.fx.FXGraphics2D;
 import org.jfree.fx.ResizableCanvas;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 
 public class FadingImage extends Application {
     private ResizableCanvas canvas;
     private BufferedImage[] backgroundImages;
     private ImageState imageState;
-    public static final double TIMEBETWEENIMAGECHANGE = 3;
-    public static final double TRANSITIONTIME = 1;
+    public static final double TIME_BETWEEN_IMAGE_CHANGE = 3;
+    public static final double TRANSITION_TIME = 1;
 
     @Override
     public void start(Stage stage) throws Exception {

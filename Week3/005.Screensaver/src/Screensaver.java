@@ -1,29 +1,28 @@
-import java.awt.*;
-import java.awt.geom.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-
-import static javafx.application.Application.launch;
-
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
-import javax.imageio.ImageIO;
-
 import org.jfree.fx.FXGraphics2D;
 import org.jfree.fx.ResizableCanvas;
 
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+
 public class Screensaver extends Application {
     private ResizableCanvas canvas;
+    private PolygonList polygons;
+    private ArrayList<Point2D> directionsVertexes;
+    private double timeSinceNewPolygon;
+    private static final double TIME_BEFORE_NEW_POLYGON = 0.5;
+    public static final double SPEED_VERTEXES = 5;
+    public static final int MAX_POLYGONS = 100;
+    public static final int AMOUNT_OF_VERTEXES_POLYGON = 4;
 
     @Override
-    public void start(Stage stage) throws Exception
-    {
+    public void start(Stage stage) throws Exception {
 
         BorderPane mainPane = new BorderPane();
         canvas = new ResizableCanvas(g -> draw(g), mainPane);
@@ -33,8 +32,7 @@ public class Screensaver extends Application {
             long last = -1;
 
             @Override
-            public void handle(long now)
-            {
+            public void handle(long now) {
                 if (last == -1)
                     last = now;
                 update((now - last) / 1000000000.0);
@@ -50,25 +48,55 @@ public class Screensaver extends Application {
     }
 
 
-    public void draw(FXGraphics2D graphics)
-    {
+    public void draw(FXGraphics2D graphics) {
         graphics.setTransform(new AffineTransform());
         graphics.setBackground(Color.white);
         graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
+        for (Polygon polygon : polygons) {
+            polygon.draw(graphics);
+        }
     }
 
-    public void init()
-    {
-
+    public void init() {
+        this.polygons = new PolygonList();
+        this.directionsVertexes = new ArrayList<>();
+        this.polygons.add(createPolygon());
     }
 
-    public void update(double deltaTime)
-    {
-
+    private Polygon createPolygon() {
+        if (this.polygons.isEmpty())  {
+            ArrayList<Point2D> vertexes = new ArrayList<>();
+            for (int i = 0; i < AMOUNT_OF_VERTEXES_POLYGON; i++) {
+                vertexes.add(new Point2D.Double(Math.random()*640.0, Math.random()*480.0));
+            }
+            for (int i = 0; i < AMOUNT_OF_VERTEXES_POLYGON; i++) {
+                double angle = Math.random()*2*Math.PI;
+                this.directionsVertexes.add(new Point2D.Double(Math.cos(angle)*SPEED_VERTEXES, Math.sin(angle)*SPEED_VERTEXES));
+            }
+            return new Polygon(vertexes);
+        }
+        ArrayList<Point2D> vertexes = new ArrayList<>();
+        ArrayList<Point2D> previousVertexes = this.polygons.get(this.polygons.size()-1).getPoints();
+        for (int i = 0; i < previousVertexes.size(); i++) {
+            Point2D direction = this.directionsVertexes.get(i);
+            Point2D vertex = previousVertexes.get(i);
+            if ((vertex.getX() + direction.getX() > canvas.getWidth()) || (vertex.getX() + direction.getX() < 0))
+                direction.setLocation(-direction.getX(), direction.getY());
+            if ((vertex.getY() + direction.getY() > canvas.getHeight()) || (vertex.getY() + direction.getY() < 0))
+                direction.setLocation(direction.getX(),-direction.getY());
+            vertexes.add(new Point2D.Double(vertex.getX() + direction.getX(), vertex.getY() + direction.getY()));
+        }
+        return new Polygon(vertexes);
     }
 
-    public static void main(String[] args)
-    {
+    public void update(double deltaTime) {
+        this.timeSinceNewPolygon += deltaTime;
+        if (this.timeSinceNewPolygon < TIME_BEFORE_NEW_POLYGON)
+            return;
+        this.polygons.add(createPolygon());
+    }
+
+    public static void main(String[] args) {
         launch(Screensaver.class);
     }
 
