@@ -29,8 +29,7 @@ public class FadingState implements ImageState {
         graphics.setTransform(new AffineTransform());
         graphics.setBackground(Color.WHITE);
         graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
-        graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-                (float) (this.timeSinceStateChange == 0 ? 1 : 1 - this.timeSinceStateChange /FadingImage.TRANSITIONTIME)));
+        graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         graphics.drawImage(this.backgroundImages[this.lastImage],
                 AffineTransform.getScaleInstance(canvas.getWidth()/this.backgroundImages[this.lastImage].getWidth(),
                         canvas.getHeight()/this.backgroundImages[this.lastImage].getHeight()),
