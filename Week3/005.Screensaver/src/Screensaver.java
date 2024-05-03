@@ -17,12 +17,13 @@ public class Screensaver extends Application {
     private ArrayList<Point2D> directionsVertexes;
     private double timeSinceNewPolygon;
     private static final double TIME_BEFORE_NEW_POLYGON = 0.5;
+    private static final Color LINE_COLOR = Color.blue;
     public static final double SPEED_VERTEXES = 5;
     public static final int MAX_POLYGONS = 100;
     public static final int AMOUNT_OF_VERTEXES_POLYGON = 4;
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
 
         BorderPane mainPane = new BorderPane();
         canvas = new ResizableCanvas(g -> draw(g), mainPane);
@@ -52,6 +53,7 @@ public class Screensaver extends Application {
         graphics.setTransform(new AffineTransform());
         graphics.setBackground(Color.white);
         graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
+        graphics.setColor(LINE_COLOR);
         for (Polygon polygon : polygons) {
             polygon.draw(graphics);
         }
@@ -80,13 +82,26 @@ public class Screensaver extends Application {
         for (int i = 0; i < previousVertexes.size(); i++) {
             Point2D direction = this.directionsVertexes.get(i);
             Point2D vertex = previousVertexes.get(i);
-            if ((vertex.getX() + direction.getX() > canvas.getWidth()) || (vertex.getX() + direction.getX() < 0))
-                direction.setLocation(-direction.getX(), direction.getY());
+            if ((vertex.getX() + direction.getX() > canvas.getWidth()) || (vertex.getX() + direction.getX() < 0)) {
+                if (!(vertex.getX() > this.canvas.getWidth() || vertex.getX() < 0))
+                    direction.setLocation(-direction.getX(), direction.getY());
+            }
             if ((vertex.getY() + direction.getY() > canvas.getHeight()) || (vertex.getY() + direction.getY() < 0))
-                direction.setLocation(direction.getX(),-direction.getY());
-            vertexes.add(new Point2D.Double(vertex.getX() + direction.getX(), vertex.getY() + direction.getY()));
+                if (!(vertex.getY() > this.canvas.getHeight() || vertex.getY() < 0))
+                    direction.setLocation(direction.getX(),-direction.getY());
+            vertexes.add(new Point2D.Double(
+                    (vertex.getX() > this.canvas.getWidth() || vertex.getX() < 0) ?
+                            nearestValue(0,this.canvas.getWidth(),vertex.getX()) :
+                            vertex.getX() + direction.getX(),
+                    (vertex.getY() > this.canvas.getHeight() || vertex.getY() < 0) ?
+                            nearestValue(0,this.canvas.getHeight(),vertex.getY()) :
+                            vertex.getY() + direction.getY()));
         }
         return new Polygon(vertexes);
+    }
+
+    private double nearestValue(double lowestValue, double highestValue, double pick) {
+        return Math.abs(lowestValue - pick) < Math.abs(highestValue - pick) ? lowestValue : highestValue;
     }
 
     public void update(double deltaTime) {
@@ -99,5 +114,4 @@ public class Screensaver extends Application {
     public static void main(String[] args) {
         launch(Screensaver.class);
     }
-
 }

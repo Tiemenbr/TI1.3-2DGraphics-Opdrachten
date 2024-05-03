@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class Polygon implements Drawable {
-    private ArrayList<Point2D> points;
+    private final ArrayList<Point2D> points;
 
     public Polygon(Collection<Point2D> vertexes) {
         this.points = new ArrayList<>();
