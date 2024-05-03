@@ -33,6 +33,14 @@ public class Colors extends Application {
         graphics.setTransform(new AffineTransform());
         graphics.setBackground(Color.white);
         graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
+        Color[] colors = { Color.BLACK, Color.BLUE, Color.CYAN,
+                    Color.DARK_GRAY, Color.GRAY, Color.GREEN,
+                    Color.LIGHT_GRAY, Color.MAGENTA, Color.ORANGE,
+                    Color.PINK, Color.RED, Color.WHITE, Color.YELLOW };
+        for (int i = 0; i < 13; i++) {
+            graphics.setColor(colors[i]);
+            graphics.fill(new Rectangle2D.Double(i*100,100,90,90));
+        }
     }
 
 
