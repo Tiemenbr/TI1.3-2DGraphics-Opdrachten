@@ -1,7 +1,10 @@
+import org.jfree.fx.FXGraphics2D;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
-public class PolygonList extends ArrayList<Polygon> {
+public class PolygonList extends ArrayList<Polygon> implements Drawable {
     public PolygonList() {
     }
 
@@ -11,6 +14,14 @@ public class PolygonList extends ArrayList<Polygon> {
 
     public PolygonList(int initialCapacity) {
         super(initialCapacity);
+    }
+
+    @Override
+    public void draw(FXGraphics2D graphics) {
+        Iterator<Polygon> iterator = this.iterator();
+        while (iterator.hasNext()) {
+            iterator.next().draw(graphics);
+        }
     }
 
     @Override
