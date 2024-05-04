@@ -54,9 +54,7 @@ public class Screensaver extends Application {
         graphics.setBackground(Color.white);
         graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
         graphics.setColor(LINE_COLOR);
-        for (Polygon polygon : polygons) {
-            polygon.draw(graphics);
-        }
+        this.polygons.draw(graphics);
     }
 
     public void init() {
